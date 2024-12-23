@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 
 import SecureConfig as scfg
 
@@ -8,8 +9,12 @@ HOST = "localhost"
 # SERVER_PORT = 8765
 # SERVER_HOST = "localhost"
 
-SERVER_PORT = 8765
+SERVER_PORT = os.environ.get('PORT',  8765)
 SERVER_HOST = "0.0.0.0"
+
+# 3.75.158.163
+# 3.125.183.140
+# 35.157.117.28
 
 
 DB_HOST = scfg.DB_HOST  
