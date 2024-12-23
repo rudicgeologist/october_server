@@ -5,8 +5,11 @@ import SecureConfig as scfg
 PORT = 15555
 HOST = "localhost"
 
+# SERVER_PORT = 8765
+# SERVER_HOST = "localhost"
+
 SERVER_PORT = 8765
-SERVER_HOST = "localhost"
+SERVER_HOST = "0.0.0.0"
 
 
 DB_HOST = scfg.DB_HOST  
