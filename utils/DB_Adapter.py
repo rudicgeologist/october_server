@@ -1,3 +1,5 @@
+import sys
+
 import asyncpg
 import asyncio
 
@@ -23,6 +25,8 @@ class DB_Adapter:
             max_size=10
         )
         print("Connected to the database.")
+        sys.stdout.write("Connected to the database.")
+        sys.stdout.flush()
 
     async def disconnect(self):
         """Closes the connection pool."""
