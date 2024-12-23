@@ -1,3 +1,4 @@
+import sys
 import uuid
 import json
 import asyncio
@@ -21,12 +22,14 @@ class WSRV:
             _users = []
             for _uuid, usr in self.connected_users.items():
                 _users.append({"uuid": _uuid, "login": usr[1]})
-            print(_users)
+            sys.stdout.write(f"_users: \n {_users} \n")
+            sys.stdout.flush()
             online_users = {
                 "operation_tag": cfg.operTypes.USERS_ONLINE.value,
                 "users": _users
             }
-            print(online_users)
+            sys.stdout.write(f"_online_users: \n {online_users} \n")
+            sys.stdout.flush()
             message = json.dumps(online_users)
             # await asyncio.wait([user.send(message) for user in self.connected_users.values()])    # TODO user send
             await asyncio.gather(*[user[0].send(message) for user in self.connected_users.values()])
@@ -36,35 +39,36 @@ class WSRV:
         for usr in self.connected_users.values():
             if usr[0] == websocket:
                 self.connected_users = {key: val for key, val in self.connected_users.items() if val[0] != websocket}
-                print(f"del usr {usr[1]}")
+                sys.stdout.write(f"del usr {usr[1]} \n")
+                sys.stdout.flush()
         await self.NotifyUsers()
 
     async def HandleConnection(self, websocket, path):
         """Handle the user connection, message reception and disconnection."""
-        print(f"Connected: {websocket}")
+        sys.stdout.write(f"Connected: {websocket} \n")
+        sys.stdout.flush()
         try:
             async for message in websocket:
                 mess = None
                 try:
                     mess = json.loads(message)
-                    print("---------")
-                    print(mess)
-                    print("---------")
                 except ValueError as e:
-                    print(f" ERROR json.loads: {str(ValueError)} ")
+                    sys.stdout.write(f" ERROR json.loads: {str(ValueError)} \n")
+                    sys.stdout.flush()
                 finally:
                     await self.HandleMessage(mess, websocket)
 
         except websockets.exceptions.ConnectionClosed:
-            print(f" ConnectionClosed: {str(websocket)} disconnected.")
+            sys.stdout.write(f" ConnectionClosed: {str(websocket)} disconnected \n")
+            sys.stdout.flush()
             await self.DisconnectUser(websocket)
         finally:
             # Unregister user when they disconnect
-            print(f" finally: {str(websocket)} disconnected.")
+            sys.stdout.write(f" finally: {str(websocket)} disconnected \n")
+            sys.stdout.flush()
             await self.DisconnectUser(websocket)
 
     async def HandleMessage(self, message, websocket):
-        print(message)
         # if hasattr(message, 'operation_tag'):
         if "operation_tag" in message:
             message_js = json.loads(str(message).replace("\'", "\""))
@@ -80,11 +84,14 @@ class WSRV:
                         "status": "success"
                     }
                     await websocket.send(json.dumps(login_object))
-                    print("register_OK")
+                    sys.stdout.write(f"register_OK \n")
+                    sys.stdout.flush()
                     await self.NotifyUsers()
 
                 else:
-                    print("register_ERROR")
+
+                    sys.stdout.write(f"register_ERROR \n")
+                    sys.stdout.flush()
                     login_object = {
                         "status": "error"
                     }
@@ -97,11 +104,8 @@ class WSRV:
                 # _uuid = message["uuid"]
                 # result_login = await self.dba.loginUser(_login, _passH, _uuid)
                 _password = await self.dba.loginUser(_login)        #, _passH)
-                print(str(_password))
                 # await websocket.send(_password)             #(json.dumps(_password))
                 if _password is not None:
-                    print(_password["hash"])
-                    print(_password["salt"])
                     login_object = {
                         "status": "success",
                         "password": {
@@ -110,12 +114,9 @@ class WSRV:
                         }
                     }
                     await websocket.send(json.dumps(login_object))
-                #     print("LOGIN OK")
-                #     self.connected_users[str(user_uuid)] = (websocket, _login)
-                #     await self.NotifyUsers()
-                #
                 else:
-                    print("login_ERROR")
+                    sys.stdout.write(f"login_ERROR \n")
+                    sys.stdout.flush()
                     login_object = {
                         "status": "error"
                     }
@@ -126,20 +127,11 @@ class WSRV:
                 _uuid_cr = message["uuid_cr"]
                 _name = message["name"]
                 phones_js = message["phones_js"]
-                # result_create_chat = await self.dba.loginUser(_login, _passH, _uuid)
-                # print(result_login)
-                # if result_login:
-                #     print("LOGIN OK")
-                #     self.connected_users[_uuid] = websocket
-                #     await self.NotifyUsers()
-                # else:
-                #     print("login_ERROR")
-
-
 
     async def StartServer(self):
         async with websockets.serve(self.HandleConnection, self.host, self.port):
-            print(f"Server is running on ws://{self.host}:{self.port}")
+            sys.stdout.write(f"Server is running on ws://{self.host}:{self.port} \n")
+            sys.stdout.flush()
             await asyncio.Future()  # Run forever
 
     def Run(self):
