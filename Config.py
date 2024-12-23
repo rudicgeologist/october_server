@@ -10,7 +10,7 @@ HOST = "localhost"
 # SERVER_HOST = "localhost"
 
 SERVER_PORT = os.environ.get('PORT',  8765)
-SERVER_HOST = "ws://october-server.onrender.com"
+SERVER_HOST = "localhost"
 
 # 3.75.158.163
 # 3.125.183.140
