@@ -45,7 +45,7 @@ class WSRV:
 
     async def HandleConnection(self, websocket, path):
         """Handle the user connection, message reception and disconnection."""
-        sys.stdout.write(f"Connected: {websocket} \n")
+        sys.stdout.write(f"SERVER_HANDLE_CONNECTION Connected: {websocket} \n")
         sys.stdout.flush()
         try:
             async for message in websocket:
@@ -59,12 +59,12 @@ class WSRV:
                     await self.HandleMessage(mess, websocket)
 
         except websockets.exceptions.ConnectionClosed:
-            sys.stdout.write(f" ConnectionClosed: {str(websocket)} disconnected \n")
+            sys.stdout.write(f"SERVER_HANDLE_CONNECTION ConnectionClosed: {str(websocket)}\n")
             sys.stdout.flush()
             await self.DisconnectUser(websocket)
         finally:
             # Unregister user when they disconnect
-            sys.stdout.write(f" finally: {str(websocket)} disconnected \n")
+            sys.stdout.write(f"SERVER_HANDLE_CONNECTION disconnected: {str(websocket)}\n")
             sys.stdout.flush()
             await self.DisconnectUser(websocket)
 
