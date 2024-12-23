@@ -1,3 +1,5 @@
+import pathlib
+import ssl
 import sys
 import uuid
 import json
@@ -128,8 +130,13 @@ class WSRV:
                 _name = message["name"]
                 phones_js = message["phones_js"]
 
+
+
     async def StartServer(self):
-        async with websockets.serve(self.HandleConnection, self.host, self.port):
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        localhost_pem = pathlib.Path(__file__).with_name("localhost.pem")
+        ssl_context.load_cert_chain(localhost_pem)
+        async with websockets.serve(self.HandleConnection, self.host, self.port, ssl=ssl_context):
             sys.stdout.write(f"Server is running on ws://{self.host}:{self.port} \n")
             sys.stdout.flush()
             await asyncio.Future()  # Run forever

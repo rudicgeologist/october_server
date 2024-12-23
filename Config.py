@@ -3,8 +3,7 @@ import os
 
 import SecureConfig as scfg
 
-PORT = 15555
-HOST = "localhost"
+
 
 # SERVER_PORT = 8765
 # SERVER_HOST = "localhost"
