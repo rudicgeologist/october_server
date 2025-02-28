@@ -4,7 +4,7 @@ import Config as cfg
 from ws import WSRV as wss
 from utils import DB_Adapter as dba
 
-async def startNserver():
+async def startNserver(_gh):
 
     db = dba.DB_Adapter(  
         user=cfg.DB_USER,
@@ -16,9 +16,9 @@ async def startNserver():
     # Connect to the database
     await db.connect()
 
-    ws_server = wss.WSRV(cfg.SERVER_HOST, cfg.SERVER_PORT, db)
+    ws_server = wss.WSRV(cfg.SERVER_HOST, cfg.SERVER_PORT, db, _gh)
     await ws_server.StartServer()
 
 
-def Run():
-    asyncio.run(startNserver())
+def Run(_gh):
+    asyncio.run(startNserver(_gh))
