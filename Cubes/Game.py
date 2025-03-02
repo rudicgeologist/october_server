@@ -32,8 +32,6 @@ class Game:
         # while not self.is_game_over():
         #     for gamer in self.gamers:
 
-
-
     def is_game_over(self):
         for gamer in self.gamers:
             if gamer["score"] == 1000:

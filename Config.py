@@ -17,11 +17,19 @@ SERVER_HOST = "0.0.0.0"   #  "localhost"
 # 35.157.117.28
 
 
-DB_HOST = scfg.DB_HOST  
-DB_PORT = scfg.DB_PORT
-DB_USER = scfg.DB_USER
-DB_PASSWORD = scfg.DB_PASSWORD
-DB_NAME = scfg.DB_NAME
+# DB_HOST = scfg.DB_HOST
+# DB_PORT = scfg.DB_PORT
+# DB_USER = scfg.DB_USER
+# DB_PASSWORD = scfg.DB_PASSWORD
+# DB_NAME = scfg.DB_NAME
+
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+
+
 
 
 class operationTypes(Enum):
