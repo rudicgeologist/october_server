@@ -4,8 +4,8 @@ import Config as cfg
 from ws import WSRV as wss
 from utils import DB_Adapter as dba
 
-async def startNserver(_gh):
 
+async def startNserver(_gh):
     db = dba.DB_Adapter(  
         user=cfg.DB_USER,
         password=cfg.DB_PASSWORD,

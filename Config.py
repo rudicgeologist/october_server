@@ -1,6 +1,27 @@
 from enum import Enum
 import os
 
+# import importlib.util
+# scfg = importlib.util.find_spec("SecureConfig")
+# found_scfg = scfg is not None
+
+try:
+    import SecureConfig as scfg
+    DB_HOST = scfg.DB_HOST
+    DB_PORT = scfg.DB_PORT
+    DB_USER = scfg.DB_USER
+    DB_PASSWORD = scfg.DB_PASSWORD
+    DB_NAME = scfg.DB_NAME
+    print("import SecureConfig as scfg")
+except ModuleNotFoundError:
+    # Error handling
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_NAME = os.getenv("DB_NAME")
+    print("ERROR: import SecureConfig as scfg")
+
 # import SecureConfig as scfg
 
 
@@ -16,18 +37,20 @@ SERVER_HOST = "0.0.0.0"   #  "localhost"
 # 3.125.183.140
 # 35.157.117.28
 
+# print(found_scfg)
 
-# DB_HOST = scfg.DB_HOST
-# DB_PORT = scfg.DB_PORT
-# DB_USER = scfg.DB_USER
-# DB_PASSWORD = scfg.DB_PASSWORD
-# DB_NAME = scfg.DB_NAME
-
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_NAME = os.getenv("DB_NAME")
+# if found_scfg:
+#     DB_HOST = scfg.DB_HOST
+#     DB_PORT = scfg.DB_PORT
+#     DB_USER = scfg.DB_USER
+#     DB_PASSWORD = scfg.DB_PASSWORD
+#     DB_NAME = scfg.DB_NAME
+# else:
+#     DB_HOST = os.getenv("DB_HOST")
+#     DB_PORT = os.getenv("DB_PORT")
+#     DB_USER = os.getenv("DB_USER")
+#     DB_PASSWORD = os.getenv("DB_PASSWORD")
+#     DB_NAME = os.getenv("DB_NAME")
 
 
 
