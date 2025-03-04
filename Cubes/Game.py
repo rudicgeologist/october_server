@@ -1,4 +1,5 @@
 import random
+import sys
 
 
 class Game:
@@ -27,10 +28,13 @@ class Game:
 
     def start_game(self):
         self.isStarted = True
-        print(f"self.gamers: {self.gamers}")
+        sys.stdout.write(f"self.gamers: {self.gamers}\n")
+        sys.stdout.flush()
 
-        # while not self.is_game_over():
-        #     for gamer in self.gamers:
+
+        while not self.is_game_over():
+            for gamer in self.gamers:
+                pass
 
     def is_game_over(self):
         for gamer in self.gamers:
@@ -44,7 +48,9 @@ class Game:
         dice = 0
         while dice < dice_count:
             dice_res = random.randint(1, 6)
-            print(dice_res)
+            sys.stdout.write(f"dice_res {dice_res} \n")
+            sys.stdout.flush()
+
             Adice = (dice, dice_res)
             result.append(Adice)
             dice = dice + 1

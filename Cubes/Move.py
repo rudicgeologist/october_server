@@ -1,4 +1,5 @@
 import random
+import sys
 from collections import Counter
 
 
@@ -11,7 +12,8 @@ class Move:
         dice = 0
         while dice < dice_count:
             dice_res = random.randint(1, 6)
-            print(dice_res)
+            sys.stdout.write(f"{dice_res} \n")
+            sys.stdout.flush()
             Adice = (dice, dice_res)
             result.append(dice_res)
             dice = dice + 1
@@ -27,11 +29,13 @@ class Move:
         if len(dices) == len(set(dices)):
             if (min(dices) == 1) and (sum(dices) == 15):
                 score += 125
-                print(f"  Score: {score}")
+                sys.stdout.write(f"  Score: {score} \n")
+                sys.stdout.flush()
                 return score
             if (min(dices) == 2) and (sum(dices) == 20):
                 score += 250
-                print(f"  Score: {score}")
+                sys.stdout.write(f"  Score: {score}\n")
+                sys.stdout.flush()
                 return score
 
 
@@ -61,7 +65,8 @@ class Move:
         score += counts[1] * 10  # Каждая единица
         score += counts[5] * 5  # Каждая пятёрка
 
-        print (f"  Score: {score}")
+        sys.stdout.write(f"  Score: {score} \n")
+        sys.stdout.flush()
         return score
 
 

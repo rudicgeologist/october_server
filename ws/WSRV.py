@@ -31,7 +31,8 @@ class WSRV:
                 "user_uuid": usr["user_uuid"]
             }
             get_login_users_object["users"].append(ausr)
-        print(get_login_users_object)
+        sys.stdout.write(f"{get_login_users_object} \n")
+        sys.stdout.flush()
 
         for user in self.login_users:
             await user["user_websocket"].send(json.dumps(get_login_users_object))
@@ -89,7 +90,8 @@ class WSRV:
         # sys.stdout.flush()
         try:
             async for message in websocket:
-                print(f"message: {message}")
+                sys.stdout.write(f"message: {message} \n")
+                sys.stdout.flush()
                 mess = None
                 try:
                     mess = json.loads(message)

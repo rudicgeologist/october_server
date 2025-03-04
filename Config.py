@@ -1,3 +1,4 @@
+import sys
 from enum import Enum
 import os
 
@@ -12,7 +13,8 @@ try:
     DB_USER = scfg.DB_USER
     DB_PASSWORD = scfg.DB_PASSWORD
     DB_NAME = scfg.DB_NAME
-    print("import SecureConfig as scfg")
+    sys.stdout.write(f"import SecureConfig as scfg\n")
+    sys.stdout.flush()
 except ModuleNotFoundError:
     # Error handling
     DB_HOST = os.getenv("DB_HOST")
@@ -20,39 +22,11 @@ except ModuleNotFoundError:
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
     DB_NAME = os.getenv("DB_NAME")
-    print("ERROR: import SecureConfig as scfg")
-
-# import SecureConfig as scfg
-
-
-
-# SERVER_PORT = 8765
-# SERVER_HOST = "localhost"
+    sys.stdout.write(f"ERROR: import SecureConfig as scfg\n")
+    sys.stdout.flush()
 
 SERVER_PORT = os.environ.get('PORT',  8765)
 SERVER_HOST = "0.0.0.0"   #  "localhost"
-
-
-# 3.75.158.163
-# 3.125.183.140
-# 35.157.117.28
-
-# print(found_scfg)
-
-# if found_scfg:
-#     DB_HOST = scfg.DB_HOST
-#     DB_PORT = scfg.DB_PORT
-#     DB_USER = scfg.DB_USER
-#     DB_PASSWORD = scfg.DB_PASSWORD
-#     DB_NAME = scfg.DB_NAME
-# else:
-#     DB_HOST = os.getenv("DB_HOST")
-#     DB_PORT = os.getenv("DB_PORT")
-#     DB_USER = os.getenv("DB_USER")
-#     DB_PASSWORD = os.getenv("DB_PASSWORD")
-#     DB_NAME = os.getenv("DB_NAME")
-
-
 
 
 class operationTypes(Enum):

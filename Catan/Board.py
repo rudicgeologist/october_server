@@ -1,4 +1,5 @@
 import random
+import sys
 from typing import List, Tuple, Optional, Dict
 
 from Catan.Road import Road
@@ -81,4 +82,6 @@ class Board:
     def display(self):
         """Простое отображение доски в консоли."""
         for row in self.tiles:
-            print(" ".join([f"{tile.resource[:3]}({tile.number or ' '})" for tile in row]))
+            sys.stdout.write(" ".join([f"{tile.resource[:3]}({tile.number or ' '})" for tile in row]))
+            sys.stdout.write(f"\n")
+            sys.stdout.flush()
