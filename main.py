@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from http.server import HTTPServer as BaseHTTPServer, SimpleHTTPRequestHandler
 import os
 
@@ -22,6 +23,11 @@ def main():
     # move.get_combination(dices)
 
 #####################
+    sys.stdout.write(f"------------------- \n")
+    sys.stdout.write(f"debug version: 3.0.0 \n")
+    sys.stdout.write(f"------------------- \n")
+
+    sys.stdout.flush()
     _gh = gh.GameHandler()
     srv.Run(_gh)
 
