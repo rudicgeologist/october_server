@@ -66,7 +66,7 @@ class Game:
 
     def is_game_over(self):
         for gamer in self.gamers:
-            if gamer.get_score() == 1000:
+            if gamer.get_score() >= 300:    # TODO == 1000
                 return True
 
         return False
