@@ -49,6 +49,9 @@ class ReceivingOperTypes(Enum):
     GAME_REQUEST_TO = "game_request_to"
     GAME_REQUEST_ANSWER_FROM = "game_request_answer_from"
 
+    GAMER_MOVING = "gamer_moving"
+    GAMER_MOVE_ANS = "gamer_move_ans"
+
 
 class SendingOperTypes(Enum):
     # Sending
@@ -58,7 +61,10 @@ class SendingOperTypes(Enum):
     USER_REGISTER_ANS = "user_register_ans"
     GAME_REQUEST_FROM = "game_request_from"
     GAME_REQUEST_ANSWER_TO = "game_request_answer_to"
+
     GAME_BEGIN = "game_begin"
+    GAMER_MOVE = "gamer_move"
+    GAMER_MOVE_NOTIF = "gamer_move_notif"
 
 
 

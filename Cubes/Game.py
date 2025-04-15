@@ -1,44 +1,72 @@
+import asyncio
+import json
 import random
 import sys
+import time
+
+from Cubes.Gamer import Gamer
+
+import Config as cfg
 
 
 class Game:
-    def __init__(self, hparam: int, max_gamers: int, users: []):
+    def __init__(self, hparam: int, max_gamers: int, users: [], uuid):
+        print('Game create')
         self.id = 0
         self.hparam = hparam
         self.max_gamers = max_gamers
         # self.users = users
         self.gamers = []
+        self.uuid = uuid
         for usr in users:
-            gamer_object = {
-                "uuid": usr["user_uuid"],
-                "login": usr["user_login"],
-                "score": 0
-            }
-            self.gamers.append(gamer_object)
+            # gamer_object = {
+            #     "uuid": usr["uuid"],
+            #     "login": usr["login"],
+            #     "websocket": usr["websocket"],
+            #     "score": 0
+            # }
+            gamer = Gamer(usr["uuid"], usr["login"], usr["websocket"])
+            self.gamers.append(gamer)
+
         self.current_player_moving = None
         self.isStarted = False
 
-    # def add_user(self, user_uuid):
-    #     # AUser = (message["login"], message["user_uuid"], websocket)
-    #     # self.login_users.append(AUser)
-    #     if user_uuid not in self.users:
-    #         if len(self.users) < self.max_gamers:
-    #             self.users.append(user_uuid)
+    def get_uuid(self):
+        return self.uuid
 
-    def start_game(self):
+    async def send_game_notif(self):  # , users: []):
+        print("send_game_notif")
+        _users = []
+        for gamer in self.gamers:
+            user_object = {
+                "uuid": gamer.get_uuid(),
+                "login": gamer.get_login()
+            }
+            _users.append(user_object)
+
+        game_begin_object = {
+            "operation_tag": cfg.SendingOperTypes.GAME_BEGIN.value,
+            "status": "success",
+            "uuid": self.uuid,
+            "users": _users
+        }
+        for gamer in self.gamers:  # TODO user send
+            await gamer.get_websocket().send(json.dumps(game_begin_object))
+
+    async def start_game(self):  # async
         self.isStarted = True
         sys.stdout.write(f"self.gamers: {self.gamers}\n")
         sys.stdout.flush()
 
-
         while not self.is_game_over():
             for gamer in self.gamers:
-                pass
+                # print(gamer)
+                # await asyncio.sleep(3)
+                await gamer.move()
 
     def is_game_over(self):
         for gamer in self.gamers:
-            if gamer["score"] == 1000:
+            if gamer.get_score() == 1000:
                 return True
 
         return False
@@ -55,6 +83,3 @@ class Game:
             result.append(Adice)
             dice = dice + 1
         return result
-
-
-

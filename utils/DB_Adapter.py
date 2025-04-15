@@ -1,3 +1,4 @@
+import json
 import sys
 
 import asyncpg
@@ -34,13 +35,13 @@ class DB_Adapter:
             sys.stdout.write("Disconnected from the database. \n")
             sys.stdout.flush()
 
-    async def execute_scalar_procedure(self, procedure_name, *args):
-        """Executes a stored procedure."""
-        async with self.pool.acquire() as connection:
-            result = await connection.fetch(
-                f'SELECT * FROM {procedure_name}({", ".join(["$" + str(i + 1) for i in range(len(args))])});', *args
-            )
-            return result
+    # async def execute_scalar_procedure(self, procedure_name, *args):
+    #     """Executes a stored procedure."""
+    #     async with self.pool.acquire() as connection:
+    #         result = await connection.fetch(
+    #             f'SELECT * FROM {procedure_name}({", ".join(["$" + str(i + 1) for i in range(len(args))])});', *args
+    #         )
+    #         return result
 
     async def registerUser(self, login, pass_hash, pass_salt): 
         async with self.pool.acquire() as connection:
@@ -80,3 +81,23 @@ class DB_Adapter:
                 return True
             else:
                 return False
+
+    async def create_game(self, gamers=[]):
+        gamers = json.dumps(gamers)
+        sys.stdout.write(f"create_game for: {gamers}\n")
+        sys.stdout.flush()
+        async with self.pool.acquire() as connection:
+            sql_str = f"select oct.create_game('{gamers}')"
+            print(sql_str)
+            result = await connection.fetch(sql_str)
+            result = str(result[0][0])
+            sys.stdout.write(f"create_game result: {result}\n")
+            sys.stdout.flush()
+
+            return result
+            # if result:
+            #     return True #TODO return
+            # else:
+            #     return False
+
+

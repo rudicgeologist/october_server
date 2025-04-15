@@ -9,12 +9,14 @@ import asyncio
 import websockets
 
 import Config as cfg
+# from Cubes.Gamer import Gamer
 
 
 class WSRV:
     def __init__(self, host, port, dba, _gh):
         self.logged_in_users = {}
         self.login_users = []
+        self.gamers = []
         self.host = host
         self.port = port
         self.dba = dba
@@ -40,23 +42,23 @@ class WSRV:
         # await websocket.send(json.dumps(get_login_users_object))
         # await asyncio.gather(*[user[0].send(message) for user in self.logged_in_users.values()])
 
-    async def NotifyUsers(self):
-        if self.logged_in_users:  # Only notify if there are users online
-            # message = "Online users: " + ", ".join(self.connected_users.keys())
-            _users = []
-            for _uuid, usr in self.logged_in_users.items():
-                _users.append({"uuid": _uuid, "login": usr[1]})
-            sys.stdout.write(f"_users: \n {_users} \n")
-            sys.stdout.flush()
-            online_users = {
-                "operation_tag": cfg.ReceivingOperTypes.USERS_ONLINE.value,
-                "users": _users
-            }
-            sys.stdout.write(f"_online_users: \n {online_users} \n")
-            sys.stdout.flush()
-            message = json.dumps(online_users)
-            # await asyncio.wait([user.send(message) for user in self.connected_users.values()])    # TODO user send
-            await asyncio.gather(*[user[0].send(message) for user in self.logged_in_users.values()])
+    # async def NotifyUsers(self):
+    #     if self.logged_in_users:  # Only notify if there are users online
+    #         # message = "Online users: " + ", ".join(self.connected_users.keys())
+    #         _users = []
+    #         for _uuid, usr in self.logged_in_users.items():
+    #             _users.append({"uuid": _uuid, "login": usr[1]})
+    #         sys.stdout.write(f"_users: \n {_users} \n")
+    #         sys.stdout.flush()
+    #         online_users = {
+    #             "operation_tag": cfg.ReceivingOperTypes.USERS_ONLINE.value,
+    #             "users": _users
+    #         }
+    #         sys.stdout.write(f"_online_users: \n {online_users} \n")
+    #         sys.stdout.flush()
+    #         message = json.dumps(online_users)
+    #         # await asyncio.wait([user.send(message) for user in self.connected_users.values()])    # TODO user send
+    #         await asyncio.gather(*[user[0].send(message) for user in self.logged_in_users.values()])
 
     async def DisconnectUser(self, websocket):
         # """Unregister a user when they disconnect."""
@@ -116,7 +118,7 @@ class WSRV:
             await self.DisconnectUser(websocket)
 
     async def HandleMessage(self, message, websocket):
-        print(f"HandleMessage: {message}")
+        # print(f"HandleMessage: {message}")
         if message is not None:
             # if hasattr(message, 'operation_tag'):
             if "operation_tag" in message:
@@ -189,62 +191,86 @@ class WSRV:
                             "user_websocket": websocket
                         }
                         self.login_users.append(AUser)
-                        # self.logged_in_users.append(AUser)
+
+                        # AGamer = Gamer(message["login"], message["user_uuid"], websocket)
+                        # self.gamers.append(AGamer)
+
                         await self.notify_users()
                         sys.stdout.write(f"{self.login_users} \n")
                         sys.stdout.flush()
 
                 if operation_tag == cfg.ReceivingOperTypes.GAME_REQUEST_TO.value:
                     user_rec = message_js["second_user_uuid"]
-                    for user in self.login_users:
-                        if user["user_uuid"] == user_rec:
-                            for usr in self.login_users:
-                                if usr["user_websocket"] == websocket:
-                                    game_request_object = {
-                                        "operation_tag": cfg.SendingOperTypes.GAME_REQUEST_FROM.value,
-                                        "init_request_user_uuid": usr["user_uuid"]
-                                    }
-                                    await user["user_websocket"].send(json.dumps(game_request_object))
+
+                    f_user = next((user for user in self.login_users if user["user_uuid"] == user_rec), None)
+                    s_user = next((user for user in self.login_users if user["user_websocket"] == websocket), None)
+
+                    # for user in self.login_users:
+                    #     if user["user_uuid"] == user_rec:
+                    #         for usr in self.login_users:
+                    #             if usr["user_websocket"] == websocket:
+                    game_request_object = {
+                        "operation_tag": cfg.SendingOperTypes.GAME_REQUEST_FROM.value,
+                        "init_request_user_uuid": s_user["user_uuid"]
+                    }
+                    await f_user["user_websocket"].send(json.dumps(game_request_object))
 
                 if operation_tag == cfg.ReceivingOperTypes.GAME_REQUEST_ANSWER_FROM.value:
+                    # TODO status: success
                     user_ans = message_js["first_user_uuid"]
-                    for user in self.login_users:
-                        if user["user_uuid"] == user_ans:
-                            for usr in self.login_users:
-                                if usr["user_websocket"] == websocket:
-                                    # game_request_object = {
-                                    #     "operation_tag": cfg.SendingOperTypes.GAME_REQUEST_ANSWER_TO.value,
-                                    #     "status": "success"
-                                    # }
-                                    # await user["user_websocket"].send(json.dumps(game_request_object))
+                    users = []
+                    users_g = []
 
-                                    users = []
-                                    user_object = {
-                                        "user_login": user["user_login"],
-                                        "user_uuid": user["user_uuid"]
-                                    }
-                                    users.append(user_object)
-                                    user_object = {
-                                        "user_login": usr["user_login"],
-                                        "user_uuid": usr["user_uuid"]
-                                    }
-                                    users.append(user_object)
-                                    game = self._gh.add_game(users)
-                                    # game.start_game()
+                    f_user = next((user for user in self.login_users if user["user_uuid"] == user_ans), None)
+                    print(f'f_user: {f_user}')
+                    user_object = {
+                        "login": f_user["user_login"],
+                        "uuid": f_user["user_uuid"],
+                        "websocket": f_user["user_websocket"],
+                    }
+                    users.append(user_object)
+                    users_g.append({"uuid": f_user["user_uuid"]})
 
-                                    game_begin_object = {
-                                        "operation_tag": cfg.SendingOperTypes.GAME_BEGIN.value,
-                                        "status": "success",
-                                        "users": users
-                                    }
-                                    print(game_begin_object)
-                                    await user["user_websocket"].send(json.dumps(game_begin_object))
-                                    await usr["user_websocket"].send(json.dumps(game_begin_object))
+                    s_user = next((user for user in self.login_users if user["user_websocket"] == websocket), None)
+                    print(f's_user: {s_user}')
+                    user_object = {
+                        "login": s_user["user_login"],
+                        "uuid": s_user["user_uuid"],
+                        "websocket": s_user["user_websocket"],
+                    }
+                    users.append(user_object)
+                    users_g.append({"uuid": s_user["user_uuid"]})
 
-                if operation_tag == cfg.ReceivingOperTypes.CHAT_CREATE.value:
-                    _uuid_cr = message["uuid_cr"]
-                    _name = message["name"]
-                    phones_js = message["phones_js"]
+                    game_uuid = await self.dba.create_game(users_g)
+
+                    game = self._gh.add_game(users, game_uuid)
+                    # game.start_game()
+
+                    # game_begin_object = {
+                    #     "operation_tag": cfg.SendingOperTypes.GAME_BEGIN.value,
+                    #     "status": "success",
+                    #     "users": users
+                    # }
+                    # print(game_begin_object)
+                    # await f_user["user_websocket"].send(json.dumps(game_begin_object))
+                    # await s_user["user_websocket"].send(json.dumps(game_begin_object))
+
+                if operation_tag == cfg.ReceivingOperTypes.GAMER_MOVE_ANS.value:
+                    game_uuid = message_js["game_uuid"]
+                    gamer_uuid = message_js["gamer_uuid"]
+                    dice_score = message_js["dice_score"]
+                    await self._gh.gamer_move(game_uuid, gamer_uuid, dice_score)
+
+
+
+
+                # if operation_tag == cfg.ReceivingOperTypes.GAME_REQUEST_TO.value:
+                #     pass
+                #
+                # if operation_tag == cfg.ReceivingOperTypes.CHAT_CREATE.value:
+                #     _uuid_cr = message["uuid_cr"]
+                #     _name = message["name"]
+                #     phones_js = message["phones_js"]
 
     async def StartServer(self):
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -256,4 +282,5 @@ class WSRV:
             await asyncio.Future()  # Run forever
 
     def Run(self):
-        asyncio.run(self.StartServer())
+        # asyncio.run(self.StartServer())
+        asyncio.create_task(self.StartServer())
